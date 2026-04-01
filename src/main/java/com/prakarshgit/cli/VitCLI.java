@@ -1,5 +1,6 @@
 package com.prakarshgit.cli;
 
+import com.prakarshgit.commands.*;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -7,9 +8,10 @@ import picocli.CommandLine.Command;
         name = "vit",
         mixinStandardHelpOptions = true,
         subcommands = {
-                com.prakarshgit.commands.InitCommand.class,
-                com.prakarshgit.commands.AddCommand.class,
-                com.prakarshgit.commands.CommitCommand.class
+                InitCommand.class,
+                AddCommand.class,
+                CommitCommand.class,
+                StatusCommand.class
         }
 )
 public class VitCLI implements Runnable {
