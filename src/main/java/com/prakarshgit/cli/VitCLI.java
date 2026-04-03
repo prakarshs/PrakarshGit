@@ -12,7 +12,8 @@ import picocli.CommandLine.Command;
                 AddCommand.class,
                 CommitCommand.class,
                 StatusCommand.class,
-                LogCommand.class
+                LogCommand.class,
+                DiffCommand.class
         }
 )
 public class VitCLI implements Runnable {

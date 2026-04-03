@@ -24,6 +24,7 @@ It is built using Java and picocli, and packaged as a global CLI that works from
 * Create commit snapshots
 * Inspect working directory state
 * View commit history (`vit log`)
+* View file differences (`vit diff`)
 * Simple, predictable CLI interface
 
 ---
@@ -83,20 +84,22 @@ vit commit -m "initial commit"
 
 vit status
 vit log
+vit diff
 ```
 
 ---
 
 ## Command Reference
 
-| Command          | Description             |
-| ---------------- | ----------------------- |
-| `vit init`       | Initialize a repository |
-| `vit add <file>` | Stage a file            |
-| `vit commit -m`  | Create a commit         |
-| `vit status`     | Show working tree state |
-| `vit log`        | Show commit history     |
-| `vit --help`     | Show CLI help           |
+| Command          | Description                       |
+| ---------------- | --------------------------------- |
+| `vit init`       | Initialize a repository           |
+| `vit add <file>` | Stage a file                      |
+| `vit commit -m`  | Create a commit                   |
+| `vit status`     | Show working tree state           |
+| `vit log`        | Show commit history               |
+| `vit diff`       | Show differences from last commit |
+| `vit --help`     | Show CLI help                     |
 
 ---
 
