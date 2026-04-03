@@ -3,7 +3,7 @@ package com.prakarshgit.commands;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-import java.io.*;
+import java.io.File;
 import java.nio.file.Files;
 
 @Command(name = "commit", description = "Commit changes")
@@ -15,7 +15,14 @@ public class CommitCommand implements Runnable {
     @Override
     public void run() {
         try {
-            String indexContent = Files.readString(new File(".vit/index").toPath());
+            File indexFile = new File(".vit/index");
+
+            if (!indexFile.exists() || Files.readString(indexFile.toPath()).trim().isEmpty()) {
+                System.out.println("Nothing to commit.");
+                return;
+            }
+
+            String indexContent = Files.readString(indexFile.toPath());
 
             String parent = "";
             File headFile = new File(".vit/HEAD");
@@ -37,9 +44,7 @@ public class CommitCommand implements Runnable {
             Files.writeString(commitFile.toPath(), commitData);
 
             // update HEAD
-            Files.writeString(new File(".vit/HEAD").toPath(), hash);
-
-            Files.writeString(new File(".vit/index").toPath(), "");
+            Files.writeString(headFile.toPath(), hash);
 
             System.out.println("Committed: " + hash);
 
