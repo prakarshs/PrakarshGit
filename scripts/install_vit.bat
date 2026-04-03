@@ -25,7 +25,7 @@ if not exist "%VIT_INSTALL_DIR%" (
 
 REM Copy files
 copy /Y target\vit.jar "%VIT_INSTALL_DIR%\vit.jar" >nul
-copy /Y vit.cmd "%VIT_INSTALL_DIR%\vit.cmd" >nul
+copy /Y scripts\vit.cmd "%VIT_INSTALL_DIR%\vit.cmd"
 
 REM Read existing PATH safely
 for /f "tokens=2*" %%A in ('reg query HKCU\Environment /v PATH 2^>nul') do (

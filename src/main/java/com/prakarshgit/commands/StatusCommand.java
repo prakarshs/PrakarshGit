@@ -14,6 +14,7 @@ public class StatusCommand implements Runnable {
     public void run() {
         try {
             Map<String, String> indexMap = readIndex();
+            Map<String, String> headMap = readHead();
 
             List<String> workingFiles = new ArrayList<>();
             scanFiles(new File("."), workingFiles);
@@ -35,7 +36,10 @@ public class StatusCommand implements Runnable {
                 } else if (!indexMap.get(filePath).equals(currentHash)) {
                     modified.add(filePath);
                 } else {
-                    staged.add(filePath);
+                    // ✅ CHANGE: check against HEAD
+                    if (!headMap.containsKey(filePath) || !headMap.get(filePath).equals(currentHash)) {
+                        staged.add(filePath);
+                    }
                 }
             }
 
@@ -59,6 +63,24 @@ public class StatusCommand implements Runnable {
         if (!indexFile.exists()) return map;
 
         List<String> lines = Files.readAllLines(indexFile.toPath());
+
+        for (String line : lines) {
+            String[] parts = line.split(":");
+            if (parts.length == 2) {
+                map.put(parts[0], parts[1]);
+            }
+        }
+
+        return map;
+    }
+
+    private Map<String, String> readHead() throws Exception {
+        Map<String, String> map = new HashMap<>();
+
+        File headFile = new File(".vit/HEAD");
+        if (!headFile.exists()) return map;
+
+        List<String> lines = Files.readAllLines(headFile.toPath());
 
         for (String line : lines) {
             String[] parts = line.split(":");
