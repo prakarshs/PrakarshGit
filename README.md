@@ -23,6 +23,7 @@ It is built using Java and picocli, and packaged as a global CLI that works from
 * Stage files for commit
 * Create commit snapshots
 * Inspect working directory state
+* View commit history (`vit log`)
 * Simple, predictable CLI interface
 
 ---
@@ -81,6 +82,7 @@ vit add file.txt
 vit commit -m "initial commit"
 
 vit status
+vit log
 ```
 
 ---
@@ -93,6 +95,7 @@ vit status
 | `vit add <file>` | Stage a file            |
 | `vit commit -m`  | Create a commit         |
 | `vit status`     | Show working tree state |
+| `vit log`        | Show commit history     |
 | `vit --help`     | Show CLI help           |
 
 ---
@@ -133,7 +136,7 @@ This project is intentionally scoped and does not include:
 ## Building from Source
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/prakarshs/PrakarshGit.git
 cd prakarshGit
 mvn clean package
 ```
@@ -143,18 +146,5 @@ Output:
 ```
 target/vit.jar
 ```
-
----
-
-## Design Philosophy
-
-`vit` is not meant to replace Git.
-It exists to make version control systems easier to understand by stripping them down to their essentials.
-
----
-
-## Author
-
-Prakarsh Srivastava
 
 ---
