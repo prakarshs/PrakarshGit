@@ -7,54 +7,51 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.*;
 
-@Command(name = "status", description = "Show status")
+@Command(name = "status", description = "Show repository status")
 public class StatusCommand implements Runnable {
 
     @Override
     public void run() {
         try {
             Map<String, String> indexMap = readIndex();
-            Map<String, String> headMap = readHead();
+            Map<String, String> headMap = readHeadCommit();
 
-            List<String> workingFiles = new ArrayList<>();
-            scanFiles(new File("."), workingFiles);
+            Set<String> workingFiles = listWorkingFiles();
 
-            System.out.println("=== Vit Status ===");
+            System.out.println("Changes to be committed:");
+            for (String file : indexMap.keySet()) {
+                String indexHash = indexMap.get(file);
+                String headHash = headMap.get(file);
 
-            List<String> untracked = new ArrayList<>();
-            List<String> modified = new ArrayList<>();
-            List<String> staged = new ArrayList<>();
-
-            for (String filePath : workingFiles) {
-
-                File file = new File(filePath);
-                byte[] content = Files.readAllBytes(file.toPath());
-                String currentHash = HashUtil.sha1(content);
-
-                if (!indexMap.containsKey(filePath)) {
-                    untracked.add(filePath);
-                } else if (!indexMap.get(filePath).equals(currentHash)) {
-                    modified.add(filePath);
-                } else {
-                    // ✅ CHANGE: check against HEAD
-                    if (!headMap.containsKey(filePath) || !headMap.get(filePath).equals(currentHash)) {
-                        staged.add(filePath);
-                    }
+                if (headHash == null || !indexHash.equals(headHash)) {
+                    System.out.println("    modified: " + file);
                 }
             }
 
-            printSection("Untracked Files", untracked);
-            printSection("Modified Files", modified);
-            printSection("Staged Files", staged);
+            System.out.println("\nChanges not staged for commit:");
+            for (String file : indexMap.keySet()) {
+                File f = new File(file);
+                if (!f.exists()) continue;
+
+                byte[] content = Files.readAllBytes(f.toPath());
+                String workingHash = HashUtil.sha1(content);
+
+                if (!workingHash.equals(indexMap.get(file))) {
+                    System.out.println("    modified: " + file);
+                }
+            }
+
+            System.out.println("\nUntracked files:");
+            for (String file : workingFiles) {
+                if (!indexMap.containsKey(file)) {
+                    System.out.println("    " + file);
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    // =========================
-    // Helpers
-    // =========================
 
     private Map<String, String> readIndex() throws Exception {
         Map<String, String> map = new HashMap<>();
@@ -65,26 +62,36 @@ public class StatusCommand implements Runnable {
         List<String> lines = Files.readAllLines(indexFile.toPath());
 
         for (String line : lines) {
-            String[] parts = line.split(":");
-            if (parts.length == 2) {
-                map.put(parts[0], parts[1]);
-            }
+            if (line.trim().isEmpty()) continue;
+
+            String[] parts = line.split(":", 2);
+            map.put(parts[0], parts[1]);
         }
 
         return map;
     }
 
-    private Map<String, String> readHead() throws Exception {
+    private Map<String, String> readHeadCommit() throws Exception {
         Map<String, String> map = new HashMap<>();
 
         File headFile = new File(".vit/HEAD");
         if (!headFile.exists()) return map;
 
-        List<String> lines = Files.readAllLines(headFile.toPath());
+        String hash = Files.readString(headFile.toPath()).trim();
+        if (hash.isEmpty()) return map;
+
+        File commitFile = new File(".vit/objects/" + hash);
+        String content = Files.readString(commitFile.toPath());
+
+        String[] lines = content.split("\n");
 
         for (String line : lines) {
-            String[] parts = line.split(":");
-            if (parts.length == 2) {
+            if (line.startsWith("message:") ||
+                    line.startsWith("parent:") ||
+                    line.startsWith("timestamp:")) continue;
+
+            if (line.contains(":")) {
+                String[] parts = line.split(":", 2);
                 map.put(parts[0], parts[1]);
             }
         }
@@ -92,39 +99,25 @@ public class StatusCommand implements Runnable {
         return map;
     }
 
-    private static final Set<String> IGNORE_DIRS = Set.of(
-            ".vit",
-            ".git",
-            ".idea",
-            "target",
-            "node_modules"
-    );
+    private Set<String> listWorkingFiles() {
+        Set<String> files = new HashSet<>();
 
-    private void scanFiles(File dir, List<String> files) {
-        for (File file : Objects.requireNonNull(dir.listFiles())) {
+        File currentDir = new File(".");
 
-            if (IGNORE_DIRS.contains(file.getName())) continue;
-
-            if (file.isDirectory()) {
-                scanFiles(file, files);
-            } else {
+        for (File file : currentDir.listFiles()) {
+            if (file.isFile()) {
                 String path = file.getPath().replace("\\", "/");
 
                 if (path.startsWith("./")) {
                     path = path.substring(2);
                 }
 
-                files.add(path);
+                if (!path.startsWith(".vit")) {
+                    files.add(path);
+                }
             }
         }
-    }
 
-    private void printSection(String title, List<String> files) {
-        if (files.isEmpty()) return;
-
-        System.out.println("\n" + title + ":");
-        for (String f : files) {
-            System.out.println("  " + f);
-        }
+        return files;
     }
 }
