@@ -1,82 +1,47 @@
-# 🚀 prakarshGit (`vit`)
+# vit — a minimal version control system
 
-`vit` is a minimal version control system inspired by Git, built in Java using Maven and Picocli.
+A lightweight, Git-inspired version control system built from scratch in Java.
 
-It allows you to track files, stage changes, and create commits — all locally, with a simple CLI experience.
+<p align="center">
+  <!-- 🎥 Demo GIF (add later) -->
+  <img src="docs/demo.gif" alt="vit demo" width="700"/>
+</p>
 
 ---
 
-## ✨ Features
+## Overview
+
+`vit` is a minimal, local-first version control system designed to explore the core ideas behind tools like Git — staging, snapshots, and repository state — without the complexity of distributed systems.
+
+It is built using Java and picocli, and packaged as a global CLI that works from any directory.
+
+---
+
+## Features
 
 * Initialize repositories
-* Stage files
-* Commit changes
-* View repository status
-* Lightweight and fast
-* Works from any directory (global CLI)
+* Stage files for commit
+* Create commit snapshots
+* Inspect working directory state
+* Simple, predictable CLI interface
 
 ---
 
-## 📦 Commands
+## Installation
 
-```bash
-vit init                # Initialize a new repository
-vit add <file>         # Stage a file
-vit commit -m "msg"    # Commit staged changes
-vit status             # Show repository status
-vit --help             # Show help
-```
-
----
-
-## ⚙️ Requirements
+### Prerequisites
 
 * Java 8 or higher
-* Maven (for building)
 
 ---
 
-## 🛠️ Build
-
-Clone the repository and build the project:
-
-```bash
-git clone <your-repo-url>
-cd prakarshGit
-mvn clean package
-```
-
-This will generate:
-
-```
-target/vit.jar
-```
-
----
-
-## 💻 Installation (Windows)
-
-### 🔹 Step 1: Run installer
+### Windows
 
 ```powershell
-install_vit.bat
+scripts\install_vit.bat
 ```
 
-This will:
-
-* Copy `vit.jar` to your user directory
-* Create a command wrapper (`vit.cmd`)
-* Install `vit` globally
-
----
-
-### 🔹 Step 2: Restart terminal
-
-Close and reopen PowerShell or CMD.
-
----
-
-### 🔹 Step 3: Verify installation
+Restart your terminal, then verify:
 
 ```bash
 vit --help
@@ -84,60 +49,112 @@ vit --help
 
 ---
 
-## 📍 Manual PATH Setup (if needed)
+### Linux / WSL
 
-If `vit` is not recognized, add this to your PATH:
-
+```bash
+chmod +x scripts/install.sh
+./scripts/install.sh
 ```
-C:\Users\<your-username>\VitGit
+
+Reload your shell:
+
+```bash
+source ~/.bashrc
 ```
 
-Then restart your terminal.
+Verify:
+
+```bash
+vit --help
+```
 
 ---
 
-## 📂 Example Usage
+## Quick Start
 
 ```bash
 vit init
 
-echo "Hello World" > file.txt
+echo "hello world" > file.txt
 
 vit add file.txt
-vit commit -m "Initial commit"
+vit commit -m "initial commit"
 
 vit status
 ```
 
 ---
 
-## 🧠 How It Works (High-Level)
+## Command Reference
 
-`vit` mimics basic Git concepts:
-
-* Repository metadata stored locally
-* Staging area for tracking changes
-* Commit snapshots of files
-
----
-
-## ⚠️ Limitations
-
-This is a learning project and does NOT yet support:
-
-* Remote repositories (push/pull)
-* Merge conflicts
-* Advanced branching strategies
-* Rebasing
+| Command          | Description             |
+| ---------------- | ----------------------- |
+| `vit init`       | Initialize a repository |
+| `vit add <file>` | Stage a file            |
+| `vit commit -m`  | Create a commit         |
+| `vit status`     | Show working tree state |
+| `vit --help`     | Show CLI help           |
 
 ---
 
-## 🛣️ Roadmap
+## Architecture (High-Level)
 
-Planned improvements:
+`vit` models a simplified version of Git’s core workflow:
 
-* Branch support
-* Log command
-* Diff support
-* Remote repository simulation
-* Better storage model (Git-like objects)
+* **Working Directory** — files on disk
+* **Staging Area** — tracked changes
+* **Commits** — snapshots of state
+
+The system is intentionally minimal to focus on core concepts rather than edge cases.
+
+---
+
+## Limitations
+
+This project is intentionally scoped and does not include:
+
+* Remote repositories (push / pull)
+* Branching and merging
+* Conflict resolution
+* Rebasing or history rewriting
+
+---
+
+## Roadmap
+
+* [ ] Branch support
+* [ ] Commit history (`vit log`)
+* [ ] File diffs
+* [ ] Git-like object storage (blobs / trees)
+* [ ] Remote repository simulation
+
+---
+
+## Building from Source
+
+```bash
+git clone <your-repo-url>
+cd prakarshGit
+mvn clean package
+```
+
+Output:
+
+```
+target/vit.jar
+```
+
+---
+
+## Design Philosophy
+
+`vit` is not meant to replace Git.
+It exists to make version control systems easier to understand by stripping them down to their essentials.
+
+---
+
+## Author
+
+Prakarsh Srivastava
+
+---
